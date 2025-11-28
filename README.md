@@ -1,2 +1,2 @@
 # calculator_new
-Updated version of my old java calculator
+Calculator created in Java using Swing.
