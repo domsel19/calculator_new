@@ -25,8 +25,8 @@ public class calculator extends JFrame implements ActionListener {
     JButton button15;
     JButton button16;
     JButton button17;
-    JLabel label;
-    JLabel label2;
+    JLabel calculationlabel;
+    JLabel rescalc;
     JPanel panel;
     JPanel panel2;
     JPanel panel3;
@@ -36,6 +36,8 @@ public class calculator extends JFrame implements ActionListener {
     double zahl3;
     boolean zaehler = true;
     int test = 0;
+    String currentInput = "";
+    String operator = "";
 
     public calculator() {
         this.setTitle("Calculator");
@@ -46,23 +48,23 @@ public class calculator extends JFrame implements ActionListener {
         JPanel buttons = new JPanel();
         JPanel calculation = new JPanel();
 
-        label = new JLabel();
-        label.setHorizontalAlignment(JLabel.CENTER);
-        label.setPreferredSize(new Dimension(160, 40));
-        label.setOpaque(true);
-        label.setBackground(Color.GRAY);
+        calculationlabel = new JLabel();
+        calculationlabel.setHorizontalAlignment(JLabel.CENTER);
+        calculationlabel.setPreferredSize(new Dimension(160, 40));
+        calculationlabel.setOpaque(true);
+        calculationlabel.setBackground(Color.GRAY);
 
-        label2 = new JLabel();
-        label2.setHorizontalAlignment(JLabel.CENTER);
-        label2.setPreferredSize(new Dimension(160, 40));
-        label2.setOpaque(true);
-        label2.setBackground(Color.GREEN);
+        rescalc = new JLabel();
+        rescalc.setHorizontalAlignment(JLabel.CENTER);
+        rescalc.setPreferredSize(new Dimension(160, 40));
+        rescalc.setOpaque(true);
+        rescalc.setBackground(Color.GREEN);
 
         JButton plus = new JButton("+");
         JButton minus = new JButton("-");
         JButton mult = new JButton("*");
         JButton div = new JButton("/");
-        JButton zeor = new JButton("0");
+        JButton zero = new JButton("0");
         JButton one = new JButton("1");
         JButton two = new JButton("2");
         JButton three = new JButton("3");
@@ -75,12 +77,13 @@ public class calculator extends JFrame implements ActionListener {
         JButton calc = new JButton("=");
         JButton comma = new JButton(",");
         JButton reset = new JButton("C");
+        JButton del = new JButton("DEL");
 
         plus.addActionListener(this);
         minus.addActionListener(this);
         mult.addActionListener(this);
         div.addActionListener(this);
-        zeor.addActionListener(this);
+        zero.addActionListener(this);
         one.addActionListener(this);
         two.addActionListener(this);
         three.addActionListener(this);
@@ -95,28 +98,31 @@ public class calculator extends JFrame implements ActionListener {
         reset.addActionListener(this);
 
         result.setLayout(new BorderLayout());
-        buttons.setLayout(new GridLayout(0, 3));
+        buttons.setLayout(new GridLayout(0, 5));
 
-        buttons.add(plus);
-        buttons.add(minus);
-        buttons.add(mult);
-        buttons.add(div);
-        buttons.add(zeor);
-        buttons.add(one);
-        buttons.add(two);
-        buttons.add(three);
-        buttons.add(four);
-        buttons.add(five);
-        buttons.add(six);
         buttons.add(seven);
         buttons.add(eight);
         buttons.add(nine);
-        buttons.add(calc);
-        buttons.add(comma);
+        buttons.add(del);
         buttons.add(reset);
+        buttons.add(four);
+        buttons.add(five);
+        buttons.add(six);
+        buttons.add(mult);
+        buttons.add(div);
+        buttons.add(one);
+        buttons.add(two);
+        buttons.add(three);
+        buttons.add(plus);
+        buttons.add(minus);
+        buttons.add(zero);
+        buttons.add(comma);
+        buttons.add(calc);
 
         result.add(buttons, BorderLayout.CENTER);
         result.add(calculation, BorderLayout.SOUTH);
+        result.add(calculationlabel, BorderLayout.NORTH);
+        result.add(rescalc, BorderLayout.EAST);
         this.add(result);
     }
 
@@ -137,7 +143,64 @@ public class calculator extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // handle button clicks here
+        JButton clicked = (JButton) e.getSource();
+        String value = clicked.getText();
+
+        if (value.matches("[0-9]")) {
+            currentInput += value;
+            calculationlabel.setText(zahl1 + " " + operator + " " + zahl2);
+            return;
+        }
+
+        if (value.matches("[+\\-*/]")) {
+            zahl1 = Double.parseDouble(currentInput);
+            operator = value;
+            currentInput = "";
+            calculationlabel.setText(zahl1 + " " + operator + " " + zahl2);
+            return;
+        }
+
+        if (value.equals("=")) {
+            zahl2 = Double.parseDouble(currentInput);
+            double ergebnis = 0;
+
+            switch (operator) {
+                case "+":
+                    ergebnis = zahl1 + zahl2;
+                    break;
+                case "-":
+                    ergebnis = zahl1 - zahl2;
+                    break;
+                case "*":
+                    ergebnis = zahl1 * zahl2;
+                    break;
+                case "/":
+                    ergebnis = zahl1 / zahl2;
+                    break;
+            }
+
+            calculationlabel.setText(String.valueOf(zahl1 + " " + operator + " " + zahl2));
+            rescalc.setText(String.valueOf(ergebnis));
+            currentInput = String.valueOf(ergebnis);
+            return;
+        }
+
+        if (value.equals("C")) {
+            currentInput = "";
+            operator = "";
+            zahl1 = 0;
+            zahl2 = 0;
+            calculationlabel.setText("");
+            rescalc.setText("");
+        }
+
+        if (value.equals("del")) {
+            if (currentInput.length() > 0) {
+                currentInput = currentInput.substring(0, currentInput.length() - 1);
+                calculationlabel.setText(currentInput);
+            }
+
+        }
     }
 
 }
